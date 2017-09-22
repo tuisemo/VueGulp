@@ -1,0 +1,27 @@
+*,
+*:before,
+*:after {
+    margin: 0;
+    padding: 0;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+input{
+    outline: none;
+}
+.clearfix() {
+    zoom: 1;
+    &:after {
+        content: '';
+        display: block;
+        clear: both;
+        height: 0;
+        visibility: hidden;
+    }
+}
+.transition(@time) {
+    transition: all @time ease-in-out;
+    -webkit-transition: all @time ease-in-out;
+    -moz-transition: all @time ease-in-out;
+}

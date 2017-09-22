@@ -35,9 +35,9 @@ gulp.task('htmlhint', function() {
 });
 // 编译Less
 gulp.task('less', function() {
-    return gulp.src(['./src/css/*.less'])
+    return gulp.src(['./src/css/less/*.less', '!./src/css/less/base.less'])
         .pipe(cache(less()))
-        .pipe(gulp.dest('./public/css'));
+        .pipe(gulp.dest('./src/css'));
 });
 // 压缩css
 gulp.task('cssmin', ['less'], function() {
@@ -91,9 +91,8 @@ gulp.task('scripts', function() {
 
 gulp.task('browser-sync', function() {
     browserSync.init({
-        ui {
-            port: 3000
-        },
+        // proxy:'localhost:3000',
+        port: 3000,
         server: {
             baseDir: "./public"
         }
@@ -102,11 +101,11 @@ gulp.task('browser-sync', function() {
 
 
 // 默认任务
-gulp.task('default', ['htmlhint', 'fileinclude', 'less', 'cssmin', 'jshint', 'scripts'], function() {
+gulp.task('default', ['htmlhint', 'fileinclude', 'less', 'cssmin', 'jshint', 'scripts', 'browser-sync'], function() {
 
     // 监听文件变化
     gulp.watch('./src/js/*.js', ['jshint', 'scripts']);
-    gulp.watch(['./src/css/*.css', './src/*/*.less'], ['cssmin']);
+    gulp.watch(['./src/css/*.css', './src/css/less/*.less'], ['less','cssmin']);
     gulp.watch('./src/*.html', ['htmlhint', 'fileinclude']);
     gulp.watch('./public/*/*.*').on('change', reload);
 });

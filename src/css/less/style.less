@@ -1,0 +1,21 @@
+@import "base";
+@base-blue: #5197fc;
+.searchNav {
+    position: relative;
+    width: 100%;
+    padding: 24px;
+    .clearfix();
+    input {
+        width: 100%;
+        line-height: 32px;
+        background: #efefef;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        text-align: center;
+        .transition(0.3s);
+        &:focus {
+            border-color: @base-blue ;
+            box-shadow: 0 0 .5 .5px @base-blue;
+        }
+    }
+}
