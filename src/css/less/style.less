@@ -3,19 +3,57 @@
 .searchNav {
     position: relative;
     width: 100%;
-    padding: 24px;
+    padding: 5px 24px;
+    background: #fff;
     .clearfix();
     input {
         width: 100%;
+        font-size: 14px;
         line-height: 32px;
         background: #efefef;
-        border: 1px solid #ddd;
+        border: .5px solid #ddd;
         border-radius: 3px;
         text-align: center;
-        .transition(0.3s);
+        .transition(0.2s);
         &:focus {
-            border-color: @base-blue ;
+            background-color: #f9f9f9;
+            border: .5px solid @base-blue ;
             box-shadow: 0 0 .5 .5px @base-blue;
         }
+        &::-webkit-input-placeholder {
+            color: #999;
+        }
+        &::-moz-placeholder {
+            color: #999;
+        }
+        &:-moz-placeholder {
+            color: #999;
+        }
+        &:-ms-input-placeholder {
+            color: #999;
+        }
     }
+}
+
+.tagNav {
+    position: relative;
+    padding: 5px 24px;
+    color: #666;
+    background: #fff;
+    .clearfix();
+    .tag {
+        position: relative;
+        float: left;
+        line-height: 32px;
+        text-align: center;
+        width: 25%;
+        cursor: pointer;
+        &.active{
+        	border-bottom: 2px solid @base-blue;
+        }
+    }
+}
+.banner{
+	position: relative;
+	overflow: hidden;
 }
