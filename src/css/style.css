@@ -89,10 +89,25 @@ input {
   width: 100%;
   overflow: hidden;
 }
+.banner ul {
+  position: relative;
+  zoom: 1;
+}
+.banner ul:after {
+  content: '';
+  display: block;
+  clear: both;
+  height: 0;
+  visibility: hidden;
+}
 .banner ul li {
   float: left;
+  list-style: none;
+  width: 100%;
+  height: 300px;
+  background-size: 100%;
 }
 .banner ul li img {
-  width: 100%;
+  width: inherit;
   border: 0;
 }
