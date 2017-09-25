@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <!-- 声明文档使用的字符编码 -->
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <!-- 优先使用 IE 最新版本和 Chrome -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <!-- 页面描述 -->
@@ -15,19 +16,36 @@
     <meta name="robots" content="index,follow" />
     <!-- 为移动设备添加 viewport -->
     <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
-	<title>Document</title>
-	<link rel="stylesheet" href="./css/normalize.css">
-	<link rel="stylesheet" href="./css/style.css">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
-	<header>
-		<div class="searchNav"><input type="text" placeholder="请输入书名/作者/关键词" /></div>
-	</header>
-	<div class="tagNav">
-		<div class="tag active">推荐</div>
-		<div class="tag">分类</div>
-		<div class="tag">排行</div>
-		<div class="tag">有声</div>
-	</div>
+    <header>
+        <div class="searchNav">
+            <input type="text" placeholder="请输入书名/作者/关键词" />
+        </div>
+    </header>
+    <div class="tagNav">
+        <div class="tag active">推荐</div>
+        <div class="tag">分类</div>
+        <div class="tag">排行</div>
+        <div class="tag">有声</div>
+    </div>
+    <div class="banner">
+        <ul>
+            <li><img src="https://unsplash.it/414/300?random=0.11" alt="banner"></li>
+            <li><img src="https://unsplash.it/414/300?random=0.121" alt="banner"></li>
+            <li><img src="https://unsplash.it/414/300?random=0.141" alt="banner"></li>
+        </ul>
+    </div>
+    <script src="./js/lib/require.min.js"></script>
+    <script>
+        require(["slideJS"],function() {
+            // body...
+        })
+    </script>
 </body>
+
 </html>
