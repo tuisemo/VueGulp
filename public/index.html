@@ -16,7 +16,7 @@
     <meta name="robots" content="index,follow" />
     <!-- 为移动设备添加 viewport -->
     <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
-    <title>Document</title>
+    <title>vueDemo</title>
     <link rel="stylesheet" href="./css/normalize.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -27,25 +27,36 @@
             <input type="text" placeholder="请输入书名/作者/关键词" />
         </div>
     </header>
-    <div class="tagNav">
-        <div class="tag active">推荐</div>
-        <div class="tag">分类</div>
-        <div class="tag">排行</div>
-        <div class="tag">有声</div>
-    </div>
-    <div class="banner">
-        <ul>
-            <li style="background-image: url('https://unsplash.it/414/300?random=0.112');"></li>
-            <li style="background-image: url('https://unsplash.it/414/300?random=0.131');"></li>
-            <li style="background-image: url('https://unsplash.it/414/300?random=0.141');"></li>
-            <li style="background-image: url('https://unsplash.it/414/300?random=0.161');"></li>
-        </ul>
+    <div class="wrap">
+        <div class="tagNav">
+            <div class="tag active">推荐</div>
+            <div class="tag">分类</div>
+            <div class="tag">排行</div>
+            <div class="tag">有声</div>
+        </div>
+        <div class="banner">
+            <ul>
+                <li v-for="banner in banners"><img v-bind:src="banner.imgSrc" v-bind:alt="banner.title"></li>
+            </ul>
+        </div>
+        <div class="card">
+            <p class="title">正在热映</p>
+            <div class="list-content">
+                <ul>
+                    <li v-for="item in in_theaters">
+                        <div class="cover">
+                            <img v-bind:src="item.imgsrc" v-bind:alt="item.title">
+                        </div>
+                        <div class="name">{{ item.title | ellipsis}}</div></li>
+                </ul>
+            </div>
+        </div>
     </div>
     <script src="./js/lib/require.min.js"></script>
     <script>
-        require(["slideJS"],function() {
-            // body...
-        })
+    require(["app", "slideJS"], function() {
+        // body...
+    })
     </script>
 </body>
 

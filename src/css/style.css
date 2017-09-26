@@ -13,12 +13,18 @@ body {
   width: 100%;
   height: 100%;
 }
+ul,
+li {
+  list-style: none;
+}
 input {
   outline: none;
 }
 .searchNav {
-  position: relative;
+  position: fixed;
+  z-index: 999;
   width: 100%;
+  height: 44px;
   padding: 5px 24px;
   background: #fff;
   zoom: 1;
@@ -59,6 +65,10 @@ input {
 .searchNav input:-ms-input-placeholder {
   color: #999;
 }
+.wrap {
+  background: #eee;
+  padding-top: 44px;
+}
 .tagNav {
   position: relative;
   padding: 10px 24px;
@@ -86,11 +96,12 @@ input {
 }
 .banner {
   position: relative;
-  width: 100%;
   overflow: hidden;
+  width: 100%;
 }
 .banner ul {
   position: relative;
+  float: left;
   zoom: 1;
 }
 .banner ul:after {
@@ -102,12 +113,61 @@ input {
 }
 .banner ul li {
   float: left;
-  list-style: none;
-  width: 100%;
-  height: 300px;
-  background-size: 100%;
+  display: block;
+  min-height: 200px;
 }
 .banner ul li img {
-  width: inherit;
-  border: 0;
+  width: 100%;
+}
+.card {
+  padding-left: 24px;
+  padding-right: 24px;
+  background: #fff;
+  margin-top: 15px;
+}
+.card .title {
+  padding: 10px 0;
+  line-height: 32px;
+  font-size: 20px;
+  color: #666;
+  font-weight: bold;
+}
+.card .content h1 {
+  font-size: 16px;
+}
+.card .list-content {
+  margin-left: -15px;
+  margin-right: -15px;
+  zoom: 1;
+}
+.card .list-content:after {
+  content: '';
+  display: block;
+  clear: both;
+  height: 0;
+  visibility: hidden;
+}
+.card .list-content ul li {
+  float: left;
+  width: 33.3%;
+  margin-bottom: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.card .list-content ul li .cover {
+  width: 100%;
+  height: 120px;
+  margin-bottom: 5px;
+  overflow: hidden;
+}
+.card .list-content ul li .cover img {
+  width: 100%;
+}
+.card .list-content ul li .name {
+  position: relative;
+  width: 100%;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
