@@ -17,44 +17,88 @@
     <!-- 为移动设备添加 viewport -->
     <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
     <title>vueDemo</title>
-    <link rel="stylesheet" href="./css/normalize.css">
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/weui/1.1.1/style/weui.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.0.1/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="./css/page_style.css">
 </head>
 
 <body>
-    <header>
-        <div class="searchNav">
-            <input type="text" placeholder="请输入书名/作者/关键词" />
-        </div>
+    <header class="page-header">
+        <h1 class="page-title">身份认证系统</h1>
+        <p class="page-sub-title">统一权威的实名电子身份</p>
     </header>
-    <div class="wrap">
-        <div class="tagNav">
-            <div class="tag active">推荐</div>
-            <div class="tag">分类</div>
-            <div class="tag">排行</div>
-            <div class="tag">有声</div>
-        </div>
-        <div class="banner">
-            <ul>
-                <li v-for="banner in banners"><img v-bind:src="banner.imgSrc" v-bind:alt="banner.title"></li>
-            </ul>
-        </div>
-        <div class="card">
-            <p class="title">正在热映</p>
-            <div class="list-content">
-                <ul>
-                    <li v-for="item in in_theaters">
-                        <div class="cover">
-                            <img v-bind:src="item.imgsrc" v-bind:alt="item.title">
-                        </div>
-                        <div class="name">{{ item.title | ellipsis}}</div></li>
-                </ul>
+    <div class="wrap page-content">
+        <div class="weui-cells weui-cells_form">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">用户名</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" placeholder="以英文字母开头，3-20个字符" v-model.trim="userName.value" v-on:focus="commonReset" v-on:blur="checkUserName">
+                </div>
+                <div class="weui-cell__ft">
+                    <i></i>
+                </div>
             </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">手&nbsp;&nbsp;&nbsp;机</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="tel" placeholder="推荐使用福建省内手机号" v-model.trim="Mobile.value" v-on:focus="commonReset" v-on:blur="checkMobile">
+                </div>
+                <div class="weui-cell__ft">
+                    <i></i>
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_vcode">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">验证码</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="number" placeholder="短信验证码" v-model.trim="Msgcode.value" v-on:focus="commonReset">
+                </div>
+                <div class="weui-cell__ft">
+                    <i></i>
+                    <button class="weui-vcode-btn" v-html="sendMsgBtn.html" v-on:click="sendMsgFor('01','Citizen','mobile')">获取验证码</button>
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label for="" class="weui-label">密&nbsp;&nbsp;&nbsp;码</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="password" value="" placeholder="8-30位字符包含数字和英文字符" v-on:focus="commonReset" v-model="Password.value" v-on:blur="checkPassword">
+                </div>
+                <div class="weui-cell__ft">
+                    <i></i>
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label for="" class="weui-label">确认密码</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="password" placeholder="请再次确认密码" v-on:focus="commonReset" v-model="Password.cvalue" v-on:blur="confirmpwd">
+                </div>
+                <div class="weui-cell__ft">
+                    <i></i>
+                </div>
+            </div>
+        </div>
+        <label for="weuiAgree" class="weui-agree">
+            <input id="weuiAgree" type="checkbox" class="weui-agree__checkbox" checked="checked">
+            <span class="weui-agree__text">
+        阅读并同意<a href="/agreement.html">“通行证”服务协议</a>
+      </span>
+        </label>
+        <div class="weui-btn-area">
+            <a href="/regresult.html" class="weui-btn weui-btn_primary">提交注册</a>
         </div>
     </div>
     <script src="./js/lib/require.min.js"></script>
     <script>
-    require(["app", "slideJS"], function() {
+    require(["app"], function() {
         // body...
     })
     </script>
