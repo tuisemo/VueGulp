@@ -79,11 +79,11 @@ gulp.task('picbase64', function() {
 // 合并，压缩文件
 gulp.task('scripts', function() {
     gulp.src(['./src/js/*.js'])
-        .pipe(jsmin())
+        // .pipe(jsmin())
         .pipe(gulp.dest('./public/js'))
         .pipe(reload({ stream: true }));
     gulp.src(['./src/js/lib/*.js'])
-        .pipe(jsmin())
+        // .pipe(jsmin())
         .pipe(gulp.dest('./public/js/lib'))
         .pipe(reload({ stream: true }));
 });
