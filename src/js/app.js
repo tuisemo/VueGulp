@@ -1,13 +1,60 @@
 define(['vue', 'jqweui'], function(Vue) {
-
+    var com_username = {
+        template: `
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">用户名</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" placeholder="以英文字母开头，3-20个字符" v-bind:value="selfValue" v-on:input="handleinput">
+                </div>
+                <div class="weui-cell__ft">
+                    <i></i>
+                </div>
+            </div>
+            `,
+        data: function() {
+            return {
+                selfValue: this.value
+            };
+        },
+        props: ['value'],
+        methods: {
+            // 同步数据，双向绑定
+            handleinput: function(event) {
+                var value = event.target.value;
+                this.$emit('input', value);// 'input'后的参数就是传递给组件中v-model绑定的属性的值
+            },
+            //用户名唯一性检测
+            checkUserName: function(obj) {
+                var self = this;
+                var val = self.userName.value;
+                var RE = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
+                var promise = new Promise(function(resolve, reject) {
+                    if (!RE.test(val)) {
+                        resolve(false);
+                        self.$parent.commonMsg('格式错误');
+                        console.log('false');
+                        self.userName.result = false;
+                    } else {
+                        resolve(true);
+                        self.userName.result = true;
+                    }
+                });
+                return promise;
+            }
+        }
+    };
     var app = new Vue({
         el: '.wrap',
         created: function() {
             var that = this;
         },
         data: {
+            test: 'xxxxxxxxxxxxxx',
             userName: {
                 value: '',
+                msg: 'xxxxxxxxxxxxxuserName',
                 result: false
             },
             Mobile: {
@@ -41,8 +88,10 @@ define(['vue', 'jqweui'], function(Vue) {
                 hint: '您已完成市民通行证注册，为方便提供服务，您需前往完成实名认证。'
             }
         },
-        watch: {
+        components: {
+            'username': com_username
         },
+        watch: {},
         methods: {
             //输入框提醒方法
             commonMsg: function(MsgNum) {
@@ -92,7 +141,7 @@ define(['vue', 'jqweui'], function(Vue) {
                     });
             },
             //用户名唯一性检测
-            checkUserName: function(obj) {
+            /*checkUserName: function(obj) {
                 var self = this;
                 var val = self.userName.value;
                 var RE = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
@@ -107,7 +156,7 @@ define(['vue', 'jqweui'], function(Vue) {
                     }
                 });
                 return promise;
-            },
+            },*/
             //手机唯一性校验
             checkMobile: function() {
                 var self = this;
