@@ -42,7 +42,9 @@
                     <i></i>
                 </div>
             </div> -->
-            <div class="weui-cell">
+            <mobile  v-model="Mobile.value">
+            </mobile>
+            <!-- <div class="weui-cell">
                 <div class="weui-cell__hd">
                     <label class="weui-label">手&nbsp;&nbsp;&nbsp;机</label>
                 </div>
@@ -52,8 +54,9 @@
                 <div class="weui-cell__ft">
                     <i></i>
                 </div>
-            </div>
-            <div class="weui-cell weui-cell_vcode">
+            </div> -->
+            <sendmsg num="01" domainname="Citizen" v-bind:mobile="Mobile.value" v-model="Msgcode.value"></sendmsg>
+            <!-- <div class="weui-cell weui-cell_vcode">
                 <div class="weui-cell__hd">
                     <label class="weui-label">验证码</label>
                 </div>
@@ -64,8 +67,9 @@
                     <i></i>
                     <button class="weui-vcode-btn" v-html="sendMsgBtn.html" v-on:click="sendMsgFor('01','Citizen','mobile')">获取验证码</button>
                 </div>
-            </div>
-            <div class="weui-cell">
+            </div> -->
+            <password v-model="Password.value"></password>
+            <!-- <div class="weui-cell">
                 <div class="weui-cell__hd">
                     <label for="" class="weui-label">密&nbsp;&nbsp;&nbsp;码</label>
                 </div>
@@ -86,7 +90,7 @@
                 <div class="weui-cell__ft">
                     <i></i>
                 </div>
-            </div>
+            </div> -->
         </div>
         <label for="weuiAgree" class="weui-agree">
             <input id="weuiAgree" type="checkbox" class="weui-agree__checkbox" checked="checked">

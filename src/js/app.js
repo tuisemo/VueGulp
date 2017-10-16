@@ -1,4 +1,5 @@
 define(['vue', 'jqweui'], function(Vue) {
+    // 用户名输入框组件
     var com_username = {
         template: `
             <div class="weui-cell">
@@ -6,7 +7,7 @@ define(['vue', 'jqweui'], function(Vue) {
                     <label class="weui-label">用户名</label>
                 </div>
                 <div class="weui-cell__bd">
-                    <input class="weui-input" type="text" placeholder="以英文字母开头，3-20个字符" v-bind:value="selfValue" v-on:input="handleinput">
+                    <input class="weui-input" type="text" placeholder="以英文字母开头，3-20个字符" v-bind:value="selfValue" v-on:input="handleinput" v-on:blur="checkUserName">
                 </div>
                 <div class="weui-cell__ft">
                     <i></i>
@@ -23,12 +24,12 @@ define(['vue', 'jqweui'], function(Vue) {
             // 同步数据，双向绑定
             handleinput: function(event) {
                 var value = event.target.value;
-                this.$emit('input', value);// 'input'后的参数就是传递给组件中v-model绑定的属性的值
+                this.$emit('input', value); // 'input'后的参数就是传递给组件中v-model绑定的属性的值
             },
             //用户名唯一性检测
             checkUserName: function(obj) {
                 var self = this;
-                var val = self.userName.value;
+                var val = self.value;
                 var RE = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
                 var promise = new Promise(function(resolve, reject) {
                     if (!RE.test(val)) {
@@ -45,16 +46,210 @@ define(['vue', 'jqweui'], function(Vue) {
             }
         }
     };
+    // 手机输入框组件
+    var com_mobile = {
+        template: `
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">手&nbsp;&nbsp;&nbsp;机</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="tel" placeholder="推荐使用福建省内手机号" v-bind:value="selfValue" v-on:input="handleinput" v-on:blur="checkMobile">
+                </div>
+                <div class="weui-cell__ft">
+                    <i></i>
+                </div>
+            </div>
+            `,
+        data: function() {
+            return {
+                selfValue: this.value
+            };
+        },
+        props: ['value'],
+        methods: {
+            // 同步数据，双向绑定
+            handleinput: function(event) {
+                var value = event.target.value;
+                this.$emit('input', value); // 'input'后的参数就是传递给组件中v-model绑定的属性的值
+            },
+            // 手机格式检验
+            checkMobile: function() {
+                var self = this;
+                var val = self.value;
+                var RE = /^((13[0-9])|(14[0-9])|(15[0-9])|(17[2-9])|(18[0-9]))\d{8}$/;
+                var promise = new Promise(function(resolve, reject) {
+                    if (!RE.test(val) || val.length != 11) {
+                        self.$parent.commonMsg('格式错误');
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+                return promise;
+            }
+        }
+    };
+    // 验证码输入框组件
+    var com_sendmsg = {
+        template: `
+            <div class="weui-cell weui-cell_vcode">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">验证码</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="number" placeholder="短信验证码" v-model="selfValue" v-on:input="handleinput">
+                </div>
+                <div class="weui-cell__ft">
+                    <i></i>
+                    <button class="weui-vcode-btn" v-html="html" v-on:click="sendMsgFor">获取验证码</button>
+                </div>
+            </div>
+            `,
+        data: function() {
+            return {
+                selfValue: this.value,
+                time: 10,
+                status: true,
+                html: '点击获取验证码'
+            };
+        },
+        props: ['value', 'mobile', 'num', 'domainname'],
+        methods: {
+            // 同步数据，双向绑定
+            handleinput: function(event) {
+                var value = event.target.value;
+                this.$emit('input', value); // 'input'后的参数就是传递给组件中v-model绑定的属性的值
+            },
+            //倒计时工具
+            setTimer: function() {
+                var self = this;
+                if (self.time === 0) {
+                    self.time = 10;
+                    self.status = true;
+                    self.html = '点击获取验证码';
+                    return true;
+                } else {
+                    self.status = false;
+                    self.html = self.time + '秒后再重试';
+                    setTimeout(function() {
+                        self.time--;
+                        self.setTimer();
+                    }, 1000);
+                }
+            },
+            sendMsgFor: function() {
+                var self = this;
+                console.log(self.num);
+                console.log(self.domainname);
+                console.log(self.mobile);
+                console.log(app.Msgcode.value);
+                if (self.status) {
+                    $.ajax({
+                            url: '/api/sendMSG',
+                            type: 'post',
+                            dataType: 'json',
+                            data: {
+                                "operationType": self.num,
+                                "domainname": self.domainname,
+                                "mobile": self.mobile
+                            },
+                        })
+                        .done(function() {
+                            self.setTimer();
+                            console.log("success");
+                        })
+                        .fail(function() {
+                            self.setTimer();
+                            console.log("error");
+                        });
+                }
+            }
+        }
+    };
+    // 密码输入框组件
+    var com_password = {
+        // 这里需注意一个问题，组件只允许template中存在一个根对象，所以当存在多个同级dom时，需使用一个父级容器将其包裹
+        template: `
+            <div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">密&nbsp;&nbsp;&nbsp;码</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="password" placeholder="8-30位字符包含数字和英文字符" v-model="selfValue"  v-on:input="handleinput" v-on:blur="checkPassword">
+                    </div>
+                    <div class="weui-cell__ft">
+                        <i></i>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">确认密码</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="password" placeholder="请再次确认密码" v-model="confirm_pwd" v-on:blur="confirmpwd">
+                    </div>
+                    <div class="weui-cell__ft">
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            `,
+        data: function() {
+            return {
+                selfValue: this.value,
+                confirm_pwd: ''
+            };
+        },
+        props: ['value'],
+        methods: {
+            // 同步数据，双向绑定
+            handleinput: function(event) {
+                var value = event.target.value;
+                this.$emit('input', value); // 'input'后的参数就是传递给组件中v-model绑定的属性的值
+            },
+            // 密码格式检验
+            checkPassword: function(obj) {
+                var self = this;
+                var val = self.value;
+                var RE1 = /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/,
+                    RE2 = /^[A-Za-z0-9`~!@#\$%\^&\*\(\)_\+-=\[\]\{\}\\\|;:'"<,>\.\?\/]{8,30}$/;
+                var promise = new Promise(function(resolve, reject) {
+                    if (RE1.test(val) && RE2.test(val)) {
+                        resolve(true);
+                    } else {
+                        self.$parent.commonMsg('密码格式错误');
+                        resolve(false);
+                    }
+                });
+                return promise;
+            },
+            //再次确认密码
+            confirmpwd: function(obj) {
+                var self = this;
+                self.checkPassword().then(function(data) {// 使用Promise实现密码确认时先检测密码是否符合格式要求，再检测两次密码一致性
+                    if (data) {
+                        var element = obj.target;
+                        if (self.value === element.value && self.value !== '') {
+                            self.$parent.commonMsg('');
+                        } else {
+                            self.$parent.commonMsg('两次密码不一致');
+                        }
+                    }
+                });
+            }
+        }
+    };
+    // 应用实例
     var app = new Vue({
         el: '.wrap',
         created: function() {
             var that = this;
         },
         data: {
-            test: 'xxxxxxxxxxxxxx',
             userName: {
                 value: '',
-                msg: 'xxxxxxxxxxxxxuserName',
                 result: false
             },
             Mobile: {
@@ -67,7 +262,6 @@ define(['vue', 'jqweui'], function(Vue) {
             },
             Password: {
                 value: '',
-                cvalue: '',
                 result: false
             },
             sendMsgBtn: {
@@ -89,7 +283,10 @@ define(['vue', 'jqweui'], function(Vue) {
             }
         },
         components: {
-            'username': com_username
+            'username': com_username,
+            'mobile': com_mobile,
+            'sendmsg': com_sendmsg,
+            'password': com_password
         },
         watch: {},
         methods: {
@@ -105,7 +302,7 @@ define(['vue', 'jqweui'], function(Vue) {
                 var self = this;
             },
             //倒计时工具
-            setTimer: function() {
+            /*setTimer: function() {
                 var that = this;
                 if (that.sendMsgBtn.time === 0) {
                     that.sendMsgBtn.time = 10;
@@ -120,9 +317,9 @@ define(['vue', 'jqweui'], function(Vue) {
                         that.setTimer();
                     }, 1000);
                 }
-            },
+            },*/
             //通用短信发送接口
-            sendMsgFor: function(operationType, domainName, sendType) {
+            /*sendMsgFor: function(operationType, domainName, sendType) {
                 var that = this;
                 $.ajax({
                         url: '/api/sendMSG',
@@ -139,7 +336,7 @@ define(['vue', 'jqweui'], function(Vue) {
                     .fail(function() {
                         console.log("error");
                     });
-            },
+            },*/
             //用户名唯一性检测
             /*checkUserName: function(obj) {
                 var self = this;
@@ -158,7 +355,7 @@ define(['vue', 'jqweui'], function(Vue) {
                 return promise;
             },*/
             //手机唯一性校验
-            checkMobile: function() {
+            /*checkMobile: function() {
                 var self = this;
                 var val = self.Mobile.value;
                 var RE = /^((13[0-9])|(14[0-9])|(15[0-9])|(17[2-9])|(18[0-9]))\d{8}$/;
@@ -170,9 +367,9 @@ define(['vue', 'jqweui'], function(Vue) {
                     }
                 });
                 return promise;
-            },
+            },*/
             //密码安全性校验
-            checkPassword: function(obj) {
+            /*checkPassword: function(obj) {
                 var self = this;
                 var val = self.Password.value;
                 var RE1 = /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/,
@@ -197,7 +394,7 @@ define(['vue', 'jqweui'], function(Vue) {
                     that.Password.result = false;
                     that.commonMsg(element, false);
                 }
-            },
+            },*/
             //身份证号格式检测
             checkIDnumber: function(obj) {
                 var that = this;
