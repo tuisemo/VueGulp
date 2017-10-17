@@ -28,7 +28,8 @@ define(['vue', 'jqweui'], function(Vue) {
             },
             //用户名唯一性检测
             checkUserName: function(obj) {
-                var self = this;
+                var self = this,
+                    Sparent = self.$parent;
                 var val = self.value;
                 var RE = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
                 var promise = new Promise(function(resolve, reject) {
@@ -36,10 +37,25 @@ define(['vue', 'jqweui'], function(Vue) {
                         resolve(false);
                         self.$parent.commonMsg('格式错误');
                         console.log('false');
-                        self.userName.result = false;
+                        Sparent.checkResult.userName = false;
                     } else {
-                        resolve(true);
-                        self.userName.result = true;
+                        $.ajax({
+                                url: '/api/checkName',
+                                type: 'POST',
+                                dataType: 'json',
+                                data: { "name": self.value },
+                            })
+                            .done(function(data) {
+                                if (data.result) {
+                                    resolve(true);
+                                    Sparent.checkResult.userName = true;
+                                } else
+                                    resolve(false);
+                            })
+                            .fail(function() {
+                                console.log("error");
+                            });
+
                     }
                 });
                 return promise;
@@ -75,15 +91,31 @@ define(['vue', 'jqweui'], function(Vue) {
             },
             // 手机格式检验
             checkMobile: function() {
-                var self = this;
+                var self = this,
+                    Sparent = self.$parent;
                 var val = self.value;
                 var RE = /^((13[0-9])|(14[0-9])|(15[0-9])|(17[2-9])|(18[0-9]))\d{8}$/;
                 var promise = new Promise(function(resolve, reject) {
                     if (!RE.test(val) || val.length != 11) {
                         self.$parent.commonMsg('格式错误');
                         resolve(false);
+                        Sparent.checkResult.Mobile = false;
                     } else {
-                        resolve(true);
+                        $.ajax({
+                                url: '/api/checkMobile',
+                                type: 'POST',
+                                dataType: 'json',
+                                data: { "mobile": self.value },
+                            })
+                            .done(function(data) {
+                                if (data.result) {
+                                resolve(true);
+                                Sparent.checkResult.Mobile = true;                                    
+                                }else resolve(false);
+                            })
+                            .fail(function() {
+                                console.log("error");
+                            });
                     }
                 });
                 return promise;
@@ -211,30 +243,35 @@ define(['vue', 'jqweui'], function(Vue) {
             },
             // 密码格式检验
             checkPassword: function(obj) {
-                var self = this;
+                var self = this,
+                    Sparent = self.$parent;
                 var val = self.value;
                 var RE1 = /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/,
                     RE2 = /^[A-Za-z0-9`~!@#\$%\^&\*\(\)_\+-=\[\]\{\}\\\|;:'"<,>\.\?\/]{8,30}$/;
                 var promise = new Promise(function(resolve, reject) {
                     if (RE1.test(val) && RE2.test(val)) {
                         resolve(true);
+                        Sparent.checkResult.Password = true;
                     } else {
-                        self.$parent.commonMsg('密码格式错误');
+                        Sparent.commonMsg('密码格式错误');
                         resolve(false);
+                        Sparent.checkResult.Password = true;
                     }
                 });
                 return promise;
             },
             //再次确认密码
             confirmpwd: function(obj) {
-                var self = this;
-                self.checkPassword().then(function(data) {// 使用Promise实现密码确认时先检测密码是否符合格式要求，再检测两次密码一致性
+                var self = this,
+                    Sparent = self.$parent;
+                self.checkPassword().then(function(data) { // 使用Promise实现密码确认时先检测密码是否符合格式要求，再检测两次密码一致性
                     if (data) {
                         var element = obj.target;
                         if (self.value === element.value && self.value !== '') {
-                            self.$parent.commonMsg('');
+                            Sparent.checkResult.Password = true;
                         } else {
                             self.$parent.commonMsg('两次密码不一致');
+                            Sparent.checkResult.Password = false;
                         }
                     }
                 });
@@ -248,26 +285,15 @@ define(['vue', 'jqweui'], function(Vue) {
             var that = this;
         },
         data: {
-            userName: {
-                value: '',
-                result: false
-            },
-            Mobile: {
-                value: '',
-                result: false
-            },
-            Msgcode: {
-                value: '',
-                result: false
-            },
-            Password: {
-                value: '',
-                result: false
-            },
-            sendMsgBtn: {
-                time: 10,
-                statue: true,
-                html: '点击获取验证码'
+            userName: '',
+            Mobile: '',
+            Msgcode: '',
+            Password: '',
+            iCheck: true,
+            checkResult: {
+                userName: false,
+                Mobile: false,
+                Password: false
             },
             IDnum: {
                 value: '',
@@ -301,100 +327,36 @@ define(['vue', 'jqweui'], function(Vue) {
             commonReset: function(obj) {
                 var self = this;
             },
-            //倒计时工具
-            /*setTimer: function() {
-                var that = this;
-                if (that.sendMsgBtn.time === 0) {
-                    that.sendMsgBtn.time = 10;
-                    that.sendMsgBtn.statue = true;
-                    that.sendMsgBtn.html = '点击获取验证码';
-                    return true;
-                } else {
-                    that.sendMsgBtn.statue = false;
-                    that.sendMsgBtn.html = that.sendMsgBtn.time + '秒后再重试';
-                    setTimeout(function() {
-                        that.sendMsgBtn.time--;
-                        that.setTimer();
-                    }, 1000);
+            loginSubmit: function() {
+                var self = this;
+                var isSubmit = true;
+                for (var el in self.checkResult) {
+                    isSubmit = self.checkResult[el] && isSubmit;
                 }
-            },*/
-            //通用短信发送接口
-            /*sendMsgFor: function(operationType, domainName, sendType) {
-                var that = this;
-                $.ajax({
-                        url: '/api/sendMSG',
-                        type: 'post',
-                        dataType: 'json',
-                        data: {
-                            "operationType": operationType,
-                            "mobile": that.Tel.value
-                        },
-                    })
-                    .done(function() {
-                        console.log("success");
-                    })
-                    .fail(function() {
-                        console.log("error");
-                    });
-            },*/
-            //用户名唯一性检测
-            /*checkUserName: function(obj) {
-                var self = this;
-                var val = self.userName.value;
-                var RE = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
-                var promise = new Promise(function(resolve, reject) {
-                    if (!RE.test(val)) {
-                        resolve(false);
-                        self.commonMsg('格式错误');
-                        self.userName.result = false;
-                    } else {
-                        resolve(true);
-                        self.userName.result = true;
-                    }
-                });
-                return promise;
-            },*/
-            //手机唯一性校验
-            /*checkMobile: function() {
-                var self = this;
-                var val = self.Mobile.value;
-                var RE = /^((13[0-9])|(14[0-9])|(15[0-9])|(17[2-9])|(18[0-9]))\d{8}$/;
-                var promise = new Promise(function(resolve, reject) {
-                    if (!RE.test(val) || val.length != 11) {
-                        resolve(false);
-                    } else {
-                        resolve(true);
-                    }
-                });
-                return promise;
-            },*/
-            //密码安全性校验
-            /*checkPassword: function(obj) {
-                var self = this;
-                var val = self.Password.value;
-                var RE1 = /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/,
-                    RE2 = /^[A-Za-z0-9`~!@#\$%\^&\*\(\)_\+-=\[\]\{\}\\\|;:'"<,>\.\?\/]{8,30}$/;
-                var promise = new Promise(function(resolve, reject) {
-                    if (RE.test(val) && RE.test(val)) {
-                        resolve(true);
-                    } else {
-                        resolve(false);
-                    }
-                });
-                return promise;
+                if (!self.iCheck) {
+                    self.commonMsg('请勾选通行证协议');
+                } else if (!isSubmit) {
+                    self.commonMsg('数据校验不通过');
+                } else {
+                    $.ajax({
+                            url: '/api/sign',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                "userName": self.userName,
+                                "mobile": self.Mobile,
+                                "msgcode": self.Msgcode,
+                                "password": self.Password
+                            },
+                        })
+                        .done(function() {
+                            console.log("success");
+                        })
+                        .fail(function() {
+                            console.log("error");
+                        });
+                }
             },
-            //再次确认密码
-            confirmpwd: function(obj) {
-                var that = this;
-                var element = obj.target;
-                if (that.Password.value === that.Password.cvalue && that.Password.value !== '') {
-                    that.Password.result = true;
-                    that.commonMsg(element, true);
-                } else {
-                    that.Password.result = false;
-                    that.commonMsg(element, false);
-                }
-            },*/
             //身份证号格式检测
             checkIDnumber: function(obj) {
                 var that = this;
@@ -423,10 +385,6 @@ define(['vue', 'jqweui'], function(Vue) {
                     that.commonMsg(element, false, 7002);
                     return false;
                 }
-            },
-            //检测账号信息唯一性
-            checkUserExist: function(type, value) {
-                var that = this;
             },
             //身份证唯一性校验
             IDnumExist: function(obj) {
