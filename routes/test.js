@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/api/checkName', function(req, res, next) {
-    UserModel.findOne({ "name": req.body.name }).then(function(data) {
+    UserModel.findOne({ "userName": req.body.userName }).then(function(data) {
         console.log(data);
         if (data) {
             res.json({
@@ -39,48 +39,52 @@ router.post('/api/checkMobile', function(req, res, next) {
         }
     });
 });
-
-router.post('/api/sign', function(req, res, next) {
-    var user = new UserModel(req.body);
-    console.log(req.body);
-    user.save().then(function(err) {
-        if (err) {
-            console.log(err);
+// 短信发送接口----暂未实现
+router.post('/api/sendmsg', function(req, res, next) {
+    UserModel.findOne({ "mobile": req.body.mobile }).then(function(data) {
+        if (data) {
+            res.json({
+                "result": false,
+                "msg": "该数据已存在"
+            });
         } else {
             res.json({
                 "result": true,
-                "msg": "注册成功"
+                "msg": "系统无该数据"
+            });
+        }
+    });
+});
+
+router.post('/api/sign', function(req, res, next) {
+    // UserModel.create(req.body);
+    UserModel.findOne({ "userName": req.body.userName }).then((data) => {
+        if (!data) {
+            UserModel.findOne({ "mobile": req.body.mobile }).then((data) => {
+                if (!data) {
+                    UserModel.create(req.body).then((err) => {
+                        console.log(err);
+                        if (!err) {
+                            res.json({
+                                "result": true,
+                                "msg": "注册成功"
+                            });
+                        }
+                    });
+                } else {
+                    res.json({
+                        "result": false,
+                        "msg": "该数据已存在"
+                    });
+                }
+            })
+        } else {
+            res.json({
+                "result": false,
+                "msg": "该数据已存在"
             });
         }
     })
-    /*UserModel.create(req.body).then(function(el) {
-        console.log(el);
-        res.json({
-            "result": true,
-            "msg": "注册成功"
-        });
-    });*/
-
-    /*UserModel.findOne({ "name": req.body.name }).then(function(data) {
-        console.log(data);
-        if (!data) {
-            next();
-        }
-    }).then(function(el) {
-        UserModel.findOne({ "mobile": req.body.mobile }).then(function(data) {
-            if (!data) {
-                next();
-            }
-        });
-    }).then(function(date) {
-        UserModel.create(data).then(function(el) {
-            console.log(el);
-            res.json({
-                "result": true,
-                "msg": "注册成功"
-            });
-        });
-    });*/
 });
 
 

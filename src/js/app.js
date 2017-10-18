@@ -43,14 +43,16 @@ define(['vue', 'jqweui'], function(Vue) {
                                 url: '/api/checkName',
                                 type: 'POST',
                                 dataType: 'json',
-                                data: { "name": self.value },
+                                data: { "userName": self.value },
                             })
                             .done(function(data) {
                                 if (data.result) {
                                     resolve(true);
                                     Sparent.checkResult.userName = true;
-                                } else
+                                } else {
                                     resolve(false);
+                                    self.$parent.commonMsg('已被占用');
+                                }
                             })
                             .fail(function() {
                                 console.log("error");
@@ -109,9 +111,12 @@ define(['vue', 'jqweui'], function(Vue) {
                             })
                             .done(function(data) {
                                 if (data.result) {
-                                resolve(true);
-                                Sparent.checkResult.Mobile = true;                                    
-                                }else resolve(false);
+                                    resolve(true);
+                                    Sparent.checkResult.Mobile = true;
+                                } else {
+                                    resolve(false);
+                                    self.$parent.commonMsg('已被占用');
+                                }
                             })
                             .fail(function() {
                                 console.log("error");
@@ -349,8 +354,10 @@ define(['vue', 'jqweui'], function(Vue) {
                                 "password": self.Password
                             },
                         })
-                        .done(function() {
-                            console.log("success");
+                        .done(function(data) {
+                            if (!data.result) {
+                                self.commonMsg('注册失败');
+                            }
                         })
                         .fail(function() {
                             console.log("error");

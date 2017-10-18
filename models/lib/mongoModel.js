@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;// 全局Promise
 
-const db = mongoose.connect('mongodb://localhost/27018/IDS');
+const db = mongoose.connect('mongodb://localhost:27017/person');
 
 db.connection.on("error", function(error) {
     console.log("数据库连接失败" + error)
@@ -22,7 +22,7 @@ const UserSchema = Schema({
         unique: true, // 唯一的不可重复
         type: 'String', // Schema.Type String类型
     },
-    Mobile: {
+    mobile: {
         unique: true, // 唯一的不可重复
         type: 'String', // Schema.Type String类型
     },
