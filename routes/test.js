@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const UserModel = require('../models/lib/mongoModel').UserModel;
+var request = require('request'); //解决服务请求转发
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
